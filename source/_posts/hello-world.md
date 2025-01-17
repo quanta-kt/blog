@@ -1,5 +1,6 @@
 ---
 title: Hello World
+date: 2025-01-05
 ---
 
 I have been meaning to write blogs for a long time now. I have considered
