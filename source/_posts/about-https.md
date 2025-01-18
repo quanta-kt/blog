@@ -6,7 +6,7 @@ tags:
   - Networking
 ---
 
-_Of course, this is not about the 12th letter of the Alphabet_
+_Of course, this is not about the 19th letter of the Alphabet_
 
 ## Prelude
 
