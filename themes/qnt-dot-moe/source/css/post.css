@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+.post p,
+.post h1,
+.post h2,
+.post h3,
+.post h4,
+.post h5,
+.post h6,
+.post ul,
+.post ol {
+    @apply mb-4;
+}
+
+.post h1 {
+    @apply text-2xl font-bold;
+}
+
+.post h2 {
+    @apply text-xl font-bold;
+}
+
+.post h3 {
+    @apply text-lg font-bold;
+}
+
+.post h4 {
+    @apply text-base font-bold;
+}
+
+.post .highlight {
+    @apply relative bg-slate-800 mb-4 px-2 py-4 overflow-x-auto;
+}
+
+.post .highlight table {
+    @apply w-full;
+}
+
+.post .highlight .gutter {
+    @apply hidden;
+}
+
+.post .highlight .code {
+    @apply text-white whitespace-pre;
+}
+
+.post .highlight .line .string {
+    @apply text-green-500;
+}
+
+.post .highlight .line .number {
+    @apply text-blue-500;
+}
+
+.post .highlight .line .comment {
+    @apply text-slate-400;
+}
+
+.post .highlight .line .keyword {
+    @apply text-purple-500;
+}
+
+.post .highlight .line .function {
+    @apply text-yellow-500;
+}
+
+.post .highlight .line .variable {
+    @apply text-red-500;
+}

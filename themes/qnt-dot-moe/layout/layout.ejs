@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<%- css(['/css/main.css']) -%>
+
+  <body>
+    <div
+      class="h-full w-full text-white md:grid md:grid-cols-[minmax(200px,_20%)_1fr]"
+    >
+      <div class="sticky top-0 w-full bg-slate-900 md:hidden">
+        <div class="flex flex-1 items-baseline">
+          <div class="border-slate-700 p-3 text-sm font-bold">qnt.moe</div>
+          <div class="flex flex-1 flex-grow items-baseline gap-1 p-1">
+            <a class="rounded-md px-2 py-1 text-sm hover:bg-slate-800" href="/"
+              >Home</a
+            >
+            <a
+              class="rounded-md px-2 py-1 text-sm hover:bg-slate-800"
+              href="https://blog.qnt.moe"
+              >Blog</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden h-full flex-col bg-slate-900 md:flex">
+        <div class="flex flex-1 flex-col">
+          <div class="border-b-2 border-slate-700 p-5 text-xl font-bold">
+            qnt.moe
+          </div>
+          <div class="flex flex-1 flex-grow flex-col gap-2 p-2">
+            <a class="rounded-md px-4 py-2 hover:bg-slate-800" href="/">Home</a>
+            <a
+              class="rounded-md px-4 py-2 hover:bg-slate-800"
+              href="https://blog.qnt.moe"
+              >Blog</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="my-10 px-5 pb-8">
+    	<%- body -%>
+      </div>
+    </div>
+
+  </body>
+</html>
