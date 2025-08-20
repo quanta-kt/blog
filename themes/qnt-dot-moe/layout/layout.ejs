@@ -8,7 +8,7 @@
 
   <body>
     <div
-      class="h-full w-full text-white md:grid md:grid-cols-[minmax(200px,_20%)_1fr]"
+      class="h-full w-full overflow-y-hidden text-white md:grid md:grid-cols-[minmax(200px,_20%)_1fr]"
     >
       <div class="sticky top-0 w-full bg-slate-900 md:hidden">
         <div class="flex flex-1 items-baseline">
@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <div class="hidden h-full flex-col bg-slate-900 md:flex">
+      <div class="hidden h-full overflow-y-hidden flex-col bg-slate-900 md:flex">
         <div class="flex flex-1 flex-col">
           <div class="border-b-2 border-slate-700 p-5 text-xl font-bold">
             qnt.moe
@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <div class="my-10 px-5 pb-8">
+      <div class="px-5 py-8 overflow-y-auto">
     	<%- body -%>
       </div>
     </div>

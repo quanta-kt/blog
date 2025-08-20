@@ -2,10 +2,6 @@
 
 @import "tailwindcss";
 
-* {
-  overflow-x: hidden;
-}
-
 :root {
   font-family: "Poppins", sans-serif;
 }
