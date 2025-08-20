@@ -69,7 +69,7 @@
 }
 
 .post ul {
-    @apply list-disc list-inside ml-1;
+    @apply list-disc list-outside ml-4;
 }
 
 .post ul p {
