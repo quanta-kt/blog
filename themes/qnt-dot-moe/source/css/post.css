@@ -71,11 +71,3 @@
 .post ul {
     @apply list-disc list-outside ml-4;
 }
-
-.post ul p {
-    @apply inline;
-}
-
-.post ul li {
-    @apply mb-1;
-}
