@@ -67,3 +67,15 @@
 .post .highlight .line .variable {
     @apply text-red-500;
 }
+
+.post ul {
+    @apply list-disc list-inside ml-1;
+}
+
+.post ul p {
+    @apply inline;
+}
+
+.post ul li {
+    @apply mb-1;
+}
