@@ -103,6 +103,9 @@ This is an immutable file i.o.w, once created it is never modified.
 We must also flush the memtable to an SSTable when the database exits so that we
 don't lose any entries.
 
+SSTables are binary files. I have documented it's format [here](https://github.com/quanta-kt/SandDB/blob/master/docs/sst-file-spec.md)
+if you are interested.
+
 ### Compaction
 
 Now since we create a new SSTable on each flush, we will inevitably end up with
@@ -125,5 +128,45 @@ We only pay the cost of compaction once in a while.
 
 ### Manifest
 
-TODO
+An additional file called manifest is kept around to track the SSTables and
+their metadata. It includes:
+
+* ID of the manifest file, using which we can derive the filename.
+* It's level.
+* The key range.
+
+Each time an SSTable is added or removed, the manifest is updated to reflect
+the same.
+
+When querying, the reader looks at the manifest and figures out which SSTables
+might contain the key it is looking for and reads those in the order of their
+(ID, level). The ordering matters because we want to ensure we look in the most
+recently written SSTables first.
+
+We only open the SSTables which the manifest tells us might contain our key.
+This way we don't have to open every single SSTable and we save reads and
+syscalls.
+
+We can also go beyond having a key range and add per-SSTable
+[bloom filters](https://en.wikipedia.org/wiki/Bloom_filter)
+in the manifest. This would further reduce the number of files we would have to
+open and read. I plan to implement this sometime later in future.
+
+The manifest file is a WAL-style file. When a new SSTable is added, an entry
+saying "added sst x" is appended to the file. Similarly, when an SSTable is
+deleted, an entry saying "deleted sst x" is inserted.
+
+Why do this instead of rewriting the manifest? For atomicity (and possibly for
+isolation, in future).
+
+If we replace the entire contents of manifest instead of appending, a reader in
+the middle of reading manifest might end up reading first half of the file
+before the sst was added and the later half after.
+
+I will admit that SandDB does not yet allow concurrent read/write, however I do
+see myself sitting down to implement it in future. Soon (TM).
+
+I have documented manifest file's format here
+[here](https://github.com/quanta-kt/SandDB/blob/master/docs/manifest-file-spec.md)
+if you are interested.
 
