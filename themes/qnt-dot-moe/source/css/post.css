@@ -71,3 +71,7 @@
 .post ul {
     @apply list-disc list-outside ml-4;
 }
+
+.post a {
+    @apply text-pink-400;
+}
