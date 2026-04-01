@@ -8,3 +8,6 @@ copyright = "qnx.moe"
 [params]
 logo = "/logo-100.webp"
 
+showSinglePageAsHome = true
+homeSinglePage = "_pages/home"
+
