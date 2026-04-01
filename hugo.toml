@@ -1,0 +1,7 @@
+baseURL = 'https://blog.qnx.moe/'
+locale = 'en-us'
+title = 'blog.qnx.moe'
+theme = 'hugo-ficurinia'
+
+copyright = "qnx.moe"
+
