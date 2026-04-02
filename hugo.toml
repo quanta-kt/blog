@@ -11,3 +11,13 @@ logo = "/logo-100.webp"
 showSinglePageAsHome = true
 homeSinglePage = "_pages/home"
 
+# For whatever reason, this theme hardcodes /posts/ URL in the navbar.
+# Fortunately, it is gated by this option.
+# We disable this and add an item to menu.main the way we want.
+showPostsLink = false
+
+[[menu.main]]
+name = "Posts"
+url = "/p/"
+
+
