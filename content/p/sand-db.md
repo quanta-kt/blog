@@ -17,7 +17,7 @@ I decided I will write my own. Not because this was an "unsolved" problem, but
 just because I thought "how hard could it be to roll by own key-value
 database?".
 
-I had recently read up some litrature on building simple databases from various
+I had recently read up some literature on building simple databases from various
 sources and really wanted to give it a try. The whole process has been very
 rewarding. I might even give building a relational database a shot in future.
 
