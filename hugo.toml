@@ -1,23 +1,56 @@
 baseURL = 'https://blog.qnx.moe/'
-locale = 'en-us'
+languageCode = 'en-us'
 title = 'blog.qnx.moe'
-theme = 'hugo-ficurinia'
+theme = 'PaperMod'
 
 copyright = "qnx.moe"
 
+enableRobotsTXT = true
+enableInlineShortcodes = true
+
 [params]
-logo = "/logo-100.webp"
+  defaultTheme = "auto"
+  ShowReadingTime = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowToc = true
+  TocOpen = false
 
-showSinglePageAsHome = true
-homeSinglePage = "_pages/home"
+  [params.label]
+    text = "blog.qnx.moe"
+    icon = "/logo-100.webp"
+    iconHeight = 32
 
-# For whatever reason, this theme hardcodes /posts/ URL in the navbar.
-# Fortunately, it is gated by this option.
-# We disable this and add an item to menu.main the way we want.
-showPostsLink = false
+  [params.profileMode]
+    enabled = true
+    title = "Welcome"
+    subtitle = "I set this blog up for me to post about stuff, mostly computing."
+    imageUrl = "/weee.webp"
+    imageTitle = "weee"
+    imageWidth = 150
+    imageHeight = 150
+    [[params.profileMode.buttons]]
+      name = "Posts"
+      url = "/p/"
+    [[params.profileMode.buttons]]
+      name = "Tags"
+      url = "/tags/"
 
 [[menu.main]]
-name = "Posts"
-url = "/p/"
+  name = "Posts"
+  url = "/p/"
+  weight = 10
 
+[[menu.main]]
+  name = "Tags"
+  url = "/tags/"
+  weight = 20
 
+[markup]
+  [markup.highlight]
+    noClasses = false
+    lineNos = false
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
