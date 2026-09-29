@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} · {{ site.title }}{% endblock %}
+{% block meta %}{% if post.description %}<meta name="description" content="{{ post.description }}">{% endif %}{% endblock %}
+{% block content %}
+  <article id="post">
+    <div class="date"><time datetime="{{ post.date.isoformat() }}">{{ post.date.strftime('%Y-%m-%d') }}</time></div>
+    <h1>{{ post.title }}</h1>
+{{ post.html }}
+    <footer class="end"><a href="mailto:{{ site.reply_email }}?subject={{ post.title | urlencode }}">Reply by email</a></footer>
+  </article>
+{% endblock %}

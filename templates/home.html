@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <section id="home">
+    <div class="intro">
+      <p>{{ site.description }}</p>
+    </div>
+    <p class="section-label">Posts</p>
+    <ul class="posts">
+{% for p in posts %}
+      <li><a href="{{ p.url }}">{{ p.title }}</a><time datetime="{{ p.date.isoformat() }}">{{ p.date.strftime('%Y-%m-%d') }}</time></li>
+{% endfor %}
+    </ul>
+  </section>
+{% endblock %}
