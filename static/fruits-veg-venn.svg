@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="venn" viewBox="229 -14 651 454" width="100%">
+<style>
+  #venn { display: block; max-width: 100%; height: auto; font-family: inherit; cursor: pointer; }
+  #venn .circle { fill-opacity: .25; }
+  #venn text { font-size: 15px; font-weight: 600; pointer-events: none; }
+  #venn .hint { font-size: 11px; font-weight: 400; fill: var(--muted, #866a72); }
+  #venn .hl { fill: var(--ink, #2a1a1f); fill-opacity: .1; pointer-events: none; }
+  #venn #scene { transition: transform .45s ease; transform-box: view-box; }
+  #venn #dim { fill: var(--bg, #fbe9ee); opacity: 0; transition: opacity .45s ease; pointer-events: none; }
+  #venn #dim.on { opacity: .6; }
+  #venn .outline { fill: none; stroke: var(--ink, #2a1a1f); stroke-width: 2; stroke-opacity: .75; stroke-dasharray: 4 3; pointer-events: none; }
+  .venn-def { margin: .5em 0 1.5em; padding: .8em 1em; border-radius: 6px; background: var(--code-bg, #f6dde3); font-size: .92em; }
+  .venn-def[hidden] { display: none; }
+  .venn-def b { display: block; margin-bottom: .3em; }
+  .venn-def p { margin: 0 0 .5em; }
+  .venn-def p:last-child { margin: 0; }
+  .venn-def ul { margin: 0; padding-left: 1.2em; }
+</style>
+<defs>
+  <circle id="cB" cx="453.19" cy="206" r="204"/>
+  <circle id="cV" cx="694" cy="206" r="170"/>
+  <circle id="cC" cx="654.46" cy="146.04" r="98.15"/>
+  <!-- The five atomic regions. T=(600.00,64.35) top meeting point, Bo=(600.00,347.65) bottom, P=(653.59,244.19) where B and C cross. -->
+  <path id="a-Bo"  d="M 600.00 64.35 A 204 204 0 1 0 600.00 347.65 A 170 170 0 0 1 600.00 64.35 Z"/>
+  <path id="a-Vo"  d="M 600.00 64.35 A 170 170 0 1 1 600.00 347.65 A 204 204 0 0 0 653.59 244.19 A 98.15 98.15 0 1 0 600.00 64.35 Z"/>
+  <path id="a-BV"  d="M 600.00 64.35 A 170 170 0 0 0 600.00 347.65 A 204 204 0 0 0 653.59 244.19 A 98.15 98.15 0 0 1 600.00 64.35 Z"/>
+  <path id="a-Co"  d="M 600.00 64.35 A 98.15 98.15 0 1 1 653.59 244.19 A 204 204 0 0 0 600.00 64.35 Z"/>
+  <path id="a-BVC" d="M 600.00 64.35 A 204 204 0 0 1 653.59 244.19 A 98.15 98.15 0 0 1 600.00 64.35 Z"/>
+  <path id="a-Out" fill-rule="evenodd" d="M 0 -100 H 1200 V 500 H 0 Z M 600.00 64.35 A 204 204 0 1 0 600.00 347.65 A 170 170 0 1 0 600.00 64.35 Z"/>
+  <clipPath id="clipB"></clipPath>
+  <clipPath id="clipV"></clipPath>
+  <clipPath id="clipC"></clipPath>
+  <mask id="dimMask"><rect x="0" y="-100" width="1200" height="600" fill="#fff"/><g id="dimCut" fill="#000"></g></mask>
+</defs>
+
+<g id="scene">
+<use href="#cB" class="circle" fill="rgb(31,119,180)"/>
+<use href="#cV" class="circle" fill="rgb(44,160,44)"/>
+<use href="#cC" class="circle" fill="rgb(255,127,14)"/>
+
+<text text-anchor="middle" x="413" y="210" fill="rgb(31,119,180)">Botanic fruits</text>
+<text text-anchor="middle" x="770" y="260" fill="rgb(44,160,44)">Vegetables</text>
+<text text-anchor="middle" x="700" y="120" fill="rgb(255,127,14)"><tspan x="700" dy="0">Culinary</tspan><tspan x="700" dy="1.1em">fruits</tspan></text>
+<rect id="dim" x="0" y="-100" width="1200" height="600" mask="url(#dimMask)"/>
+<g id="hl"></g>
+<use href="#cB" class="outline" clip-path="url(#clipB)" display="none"/>
+<use href="#cV" class="outline" clip-path="url(#clipV)" display="none"/>
+<use href="#cC" class="outline" clip-path="url(#clipC)" display="none"/>
+
+</g>
+<text class="hint" text-anchor="middle" x="554" y="430">Click a circle, then keep clicking inside the selection to narrow it</text>
+
+<script><![CDATA[
+(function () {
+  var NS = "http://www.w3.org/2000/svg", XL = "http://www.w3.org/1999/xlink";
+  var svg = document.getElementById("venn");
+  var circles = { B: [453.19, 206, 204], V: [694, 206, 170], C: [654.46, 146.04, 98.15] };
+  // Atomic regions and which circles they lie in. C sits inside V, so these five are all there is. Out is everything else.
+  var atoms = { Bo: "B", Vo: "V", BV: "BV", Co: "VC", BVC: "BVC", Out: "" };
+  var names = { Bo: "Botanic fruit, not eaten", Vo: "Vegetable, not a fruit", BV: "Botanic fruit eaten as vegetable", Co: "Culinary fruit, not botanic", BVC: "Botanic and culinary fruit" };
+  // The shapes a selection may take: the three circles, B+V, B+V-C, B+C, B only, V only, C only. (C+V is the C circle itself.)
+  var allowed = ["Bo,BV,BVC", "Vo,BV,Co,BVC", "Co,BVC", "BV,BVC", "BV", "BVC", "Bo", "Vo", "Co"];
+  // Definitions, keyed by the atomic regions a selection covers.
+  var defs = {
+    "Bo,BV,BVC": "<b>Botanic fruit</b><p>A product of fertilization in a plant, specifically:</p><ul><li>The seed-bearing part of a plant; often edible, colourful, fragrant, and sweet or sour; produced from a floral ovary after fertilization.</li><li>The spores of cryptogams and their accessory organs.</li></ul>",
+    "Vo,BV,Co,BVC": "<b>Vegetables</b><p>Parts of plants humans eat.</p>",
+    "Co,BVC": "<b>Culinary fruit</b><p>Any sweet or sour, edible part of a plant that resembles seed-bearing fruit even if it does not develop from a floral ovary.</p><ul><li>A sweet or sweetish vegetable, such as the petioles of rhubarb, that resembles a true fruit or is used in cookery as if it was a fruit.</li></ul>",
+    "BV,BVC": "<b>Botanic fruit that is eaten</b><p>Seed-bearing parts of plants that humans eat, raw or cooked.</p>",
+    "Bo": "<b>Botanic fruit that nobody eats</b><p>Seed-bearing parts of plants that are not food: cotton bolls, maple keys, poisonous berries.</p>",
+    "BVC": "<b>Botanic fruit eaten as fruit</b><p>Seed-bearing parts of plants that we eat as fruit: apple, mango, and tomato for the people who eat it raw.</p>",
+    "Bo,BV": "<b>Botanic fruit that is not a culinary fruit</b><p>Seed-bearing parts of plants that are either not eaten or are cooked</p>",
+    "BV": "<b>Botanic fruit eaten as a vegetable</b><p>Seed-bearing parts of plants that we cook: tomato, pumpkin, eggplant</p>",
+    "Vo,Co": "<b>Vegetables that are not botanic fruit</b><p>Edible roots, stems, and leaves, including the few eaten as fruit, like rhubarb.</p>",
+    "Vo,BV": "<b>Vegetables not eaten as fruit</b><p>The savoury plant parts: potato, spinach, pumpkin, eggplant.</p>",
+    "Co": "<b>Culinary fruit that is not a botanic fruit</b><p>Eaten as fruit, but not a seed-bearing part of the plant: rhubarb.</p>",
+    "Vo": "<b>Vegetable that is not a fruit in any sense</b><p>Edible parts of plants that are not seed-bearing and not fruit-like: potato, spinach, carrot, onion.</p>"
+  };
+  var box = document.createElement("div");
+  box.className = "venn-def";
+  box.hidden = true;
+  svg.parentNode.insertBefore(box, svg.nextSibling);
+  var sel = null;   // { inc: "BV", exc: "C" }: circles the selection must be in / must not be in
+
+  function regionsOf(inc, exc) {
+    return Object.keys(names).filter(function (a) {
+      var m = atoms[a];
+      return inc.split("").every(function (k) { return m.indexOf(k) >= 0; }) &&
+             exc.split("").every(function (k) { return m.indexOf(k) < 0; });
+    });
+  }
+  // The atom on the other side of circle k's boundary from atom a, or null if that boundary never touches a.
+  function mirror(a, k) {
+    var m = atoms[a].indexOf(k) >= 0 ? atoms[a].replace(k, "") : "BVC".split("").filter(function (c) { return c === k || atoms[a].indexOf(c) >= 0; }).join("");
+    for (var b in atoms) if (atoms[b] === m) return b;
+    return null;
+  }
+  function fill(el, regions, cls) {
+    el.innerHTML = "";
+    regions.forEach(function (a) {
+      var u = document.createElementNS(NS, "use");
+      u.setAttribute("href", "#a-" + a); u.setAttributeNS(XL, "xlink:href", "#a-" + a);
+      if (cls) u.setAttribute("class", cls);
+      el.appendChild(u);
+    });
+  }
+  function draw() {
+    var regs = sel ? regionsOf(sel.inc, sel.exc) : [];
+    fill(document.getElementById("hl"), regs, "hl");
+    fill(document.getElementById("dimCut"), regs);
+    document.getElementById("dim").setAttribute("class", regs.length ? "on" : "");
+    zoom(regs);
+    ["B", "V", "C"].forEach(function (k) {
+      // Outline of circle k: the stretches where exactly one side is selected. Clip the stroked circle to those atoms (both sides).
+      var clip = {};
+      regs.forEach(function (a) { var m = mirror(a, k); if (m && regs.indexOf(m) < 0) { clip[a] = clip[m] = true; } });
+      var out = svg.querySelector('.outline[clip-path="url(#clip' + k + ')"]');
+      out.setAttribute("display", Object.keys(clip).length ? "inline" : "none");
+      fill(document.getElementById("clip" + k), Object.keys(clip));
+    });
+    box.hidden = !regs.length;
+    if (regs.length) box.innerHTML = defs[regs.join(",")] || "<b>" + regs.map(function (a) { return names[a]; }).join(" + ") + "</b>";
+  }
+  // Zoom the scene onto the selection's bounding box; back to the full view when nothing is selected.
+  function zoom(regs) {
+    var scene = document.getElementById("scene"), vb = svg.viewBox.baseVal;
+    if (!regs.length) return scene.style.transform = "";
+    var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    svg.querySelectorAll("#hl use").forEach(function (u) {
+      var b = u.getBBox();
+      x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height);
+    });
+    var pad = 30, s = Math.min(vb.width / (x1 - x0 + pad), vb.height / (y1 - y0 + pad), 2.2);
+    var cx = vb.x + vb.width / 2, cy = vb.y + vb.height / 2, bx = (x0 + x1) / 2, by = (y0 + y1) / 2;
+    scene.style.transform = "translate(" + (cx - bx * s) + "px, " + (cy - by * s) + "px) scale(" + s + ")";
+  }
+  function locate(x, y) {
+    var inside = "", owner = null, best = Infinity;
+    for (var k in circles) {
+      var c = circles[k], d = Math.hypot(x - c[0], y - c[1]) / c[2], score = c[2] * 10 + d;
+      if (d <= 1) { inside += k; if (score < best) { best = score; owner = k; } }
+    }
+    for (var a in atoms) if (atoms[a] === inside) return { atom: a, inside: inside, owner: owner };
+    return { atom: "Out", inside: "", owner: null };
+  }
+  // One narrowing step: the first unconstrained circle (includes before excludes) that changes the shape into an allowed one.
+  function narrow(inside) {
+    var cur = regionsOf(sel.inc, sel.exc).join(",");
+    var order = "BVC".split("").filter(function (k) { return inside.indexOf(k) >= 0; })
+      .concat("BVC".split("").filter(function (k) { return inside.indexOf(k) < 0; }));
+    for (var i = 0; i < order.length; i++) {
+      var k = order[i];
+      if ((sel.inc + sel.exc).indexOf(k) >= 0) continue;
+      var next = inside.indexOf(k) >= 0 ? { inc: sel.inc + k, exc: sel.exc } : { inc: sel.inc, exc: sel.exc + k };
+      var shape = regionsOf(next.inc, next.exc).join(",");
+      if (shape !== cur && allowed.indexOf(shape) >= 0) return next;
+    }
+    // No single step allowed: jump to the exact region under the cursor if that one is.
+    var rest = "BVC".split("").filter(function (k) { return inside.indexOf(k) < 0; }).join("");
+    var exact = regionsOf(inside, rest).join(",");
+    if (exact !== cur && allowed.indexOf(exact) >= 0) return { inc: inside, exc: rest };
+    return null;   // nowhere allowed to go: clear
+  }
+  svg.addEventListener("click", function (e) {
+    var pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(document.getElementById("scene").getScreenCTM().inverse());
+    var at = locate(pt.x, pt.y);
+    if (!at.owner) sel = null;
+    else if (sel && regionsOf(sel.inc, sel.exc).indexOf(at.atom) >= 0) sel = narrow(at.inside);
+    else sel = { inc: at.owner, exc: "" };
+    draw();
+  });
+})();
+]]></script>
+</svg>
