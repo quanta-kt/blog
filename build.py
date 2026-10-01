@@ -62,11 +62,20 @@ def fence(self, tokens, idx, options, env):
     return f"<pre><code>{code}</code></pre>\n"
 
 
+def image(self, tokens, idx, options, env):
+    """Inline .svg images so they can carry their own styles and scripts."""
+    src = tokens[idx].attrGet("src")
+    if src.endswith(".svg"):
+        return (ROOT / src.lstrip("/")).read_text()
+    return self.image(tokens, idx, options, env)
+
+
 def main():
     site = tomllib.loads((ROOT / "config.toml").read_text())
     now = dt.datetime.now(dt.timezone.utc)
     md = MarkdownIt("commonmark").enable(["table", "strikethrough"])
     md.add_render_rule("fence", fence)
+    md.add_render_rule("image", image)
 
     posts = []
     for path in (ROOT / "content" / "p").glob("*.md"):
